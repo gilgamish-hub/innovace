@@ -1,0 +1,27 @@
+{
+    "skills": [
+        "c",
+        "flask",
+        "git",
+        "java",
+        "javascript",
+        "keras",
+        "mongodb",
+        "mysql",
+        "numpy",
+        "pandas",
+        "python",
+        "sql",
+        "tensorflow"
+    ],
+    "education": [
+        "bachelor"
+    ],
+    "experience_years": 0,
+    "location_preference": [
+        "delhi",
+        "remote"
+    ],
+    "min_stipend": 5000,
+    "duration_preference": null
+}
