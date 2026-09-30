@@ -224,7 +224,9 @@ DATA_PATH = os.path.join(
 def load_data(path):
     try:
         df = pd.read_csv(path)
-        df["skills_clean"] = df.get("skills", "").fillna("").astype(str).str.lower().str.replace(r"[^a-z0-9, ]", "", regex=True)
+        # Locations are stored as Python tuples in text form, e.g. "('Work from home', 'Delhi')"
+        df["location"] = df["location"].astype(str).str.replace(r"[()']", "", regex=True).str.strip(" ,")
+        df["skills_clean"] =df.get("skills", "").fillna("").astype(str).str.lower().str.replace(r"[^a-z0-9, ]", "", regex=True)
         df["combined_text"] = df.get("role", "").astype(str) + " " + df.get("company_name", "").astype(str) + " " + df["skills_clean"]
         if "stipend_numeric" not in df.columns:
             df["stipend_numeric"] = (
