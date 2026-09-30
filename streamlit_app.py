@@ -6,9 +6,8 @@ import streamlit as st
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-# import google.generativeai as genai
-import google.generativeai as genai
-# from google import genai
+# Each visitor gets their own client, so API keys are never shared between sessions
+from google import genai
 from PyPDF2 import PdfReader
 import ollama
 
@@ -22,7 +21,7 @@ st.set_page_config(
     page_title="InternAI - Smart Internship Finder", 
     page_icon="🎯",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # -------------------------------
@@ -162,8 +161,7 @@ GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 def ask_gemini_safe(client, prompt, model=GEMINI_MODEL):
     try:
-        gen_model = client.GenerativeModel(model)
-        response = gen_model.generate_content(prompt)
+        response = client.models.generate_content(model=model, contents=prompt)
 
         if hasattr(response, "text") and response.text:
             return response.text, None
@@ -192,8 +190,9 @@ def ask_llama(prompt, model="llama3:8b"):
 
 def ask_ai(client, prompt):
     # Try Gemini first (if working)
+    gemini_err = "no Gemini API key entered"
     if client:
-        res, err = ask_gemini_safe(client, prompt)
+        res, gemini_err = ask_gemini_safe(client, prompt)
         if res:
             return res, None
 
@@ -202,7 +201,7 @@ def ask_ai(client, prompt):
     if res:
         return res, None
 
-    return None, "Both Gemini and Llama failed"
+    return None, f"Gemini failed ({gemini_err}) and no local Llama model is running."
 
 # if st.button("Test Gemini"):
 #     res, err = ask_gemini_safe(client, "Say hello in one line")
@@ -293,13 +292,17 @@ def setup_gemini():
     with st.sidebar:
         st.header("🤖 AI Configuration")
         api_key_input = st.text_input("Enter Gemini API key", type="password")
+        st.caption(
+            "Recommendations work without a key. Skill analysis, resume suggestions and the roadmap "
+            "need a free Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). "
+            "Your key is only used for your session and is not stored."
+        )
 
     api_key = api_key_input or os.getenv("GEMINI_API_KEY")
 
     if api_key:
-        genai.configure(api_key=api_key)
         st.sidebar.success("✅ AI enabled!")
-        return genai
+        return genai.Client(api_key=api_key)
     else:
         st.sidebar.warning("Add API key")
         return None
