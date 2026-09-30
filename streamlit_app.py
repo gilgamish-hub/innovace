@@ -157,7 +157,10 @@ def load_custom_css():
 #     except Exception as e:
 #         return None, str(e) + "\n" + traceback.format_exc()
 
-def ask_gemini_safe(client, prompt, model="models/gemini-1.5-flash"):
+# Model name can be changed without touching the code: set GEMINI_MODEL in the environment
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+
+def ask_gemini_safe(client, prompt, model=GEMINI_MODEL):
     try:
         gen_model = client.GenerativeModel(model)
         response = gen_model.generate_content(prompt)
@@ -213,7 +216,10 @@ def ask_ai(client, prompt):
 # -------------------------------
 # Load dataset & build vectorizers
 # -------------------------------
-DATA_PATH = r"E:\internship recommendation project\data\processed\internship_data_clean.csv"
+DATA_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "data", "processed", "internship_data_clean.csv"
+)
 
 @st.cache_data
 def load_data(path):
@@ -406,7 +412,9 @@ def filter_internships(df, user_skills, filters):
     
     # Apply filters
     if filters["locations"]:
-        pattern = "|".join(filters["locations"])
+        # The dataset labels remote internships as "Work from home"
+        locations = ["Work from home" if loc == "Remote" else loc for loc in filters["locations"]]
+        pattern = "|".join(locations)
         df_filtered = df_filtered[df_filtered["location"].astype(str).str.contains(pattern, case=False, na=False)]
     
     min_s, max_s = filters["stipend_range"]

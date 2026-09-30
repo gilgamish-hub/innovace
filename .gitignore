@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Secrets - never commit API keys
+.env
+.streamlit/secrets.toml
+
+# Personal or generated files
+.streamlit_language_pref.json
+data/raw/*.pdf
+data/processed/user_profile.json
+data/processed/internship_data_filtered.csv

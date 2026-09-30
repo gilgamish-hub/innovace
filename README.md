@@ -104,22 +104,20 @@ The system generates:
 ---
 
 ## 🧠 System Architecture
-User Input
-↓
-ML Recommendation Engine (TF-IDF + Cosine Similarity)
-↓
-Top Internships + Match Score
-↓
-Skill Gap Analysis
-↓
-LLM (Llama/Gemini)
-↓
 
-Learning Advice
-Resume Feedback
-Roadmap Generation
-
-
+```text
+User input (skills, filters)
+        ↓
+Recommendation engine (TF-IDF + cosine similarity)
+        ↓
+Top internships + match score
+        ↓
+Skill gap analysis
+        ↓
+LLM (Gemini, with a local Llama 3 model as fallback)
+        ↓
+Learning advice  |  Resume feedback  |  Roadmap
+```
 
 ---
 
@@ -127,46 +125,85 @@ Roadmap Generation
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/internai.git
-cd internai
+git clone https://github.com/gilgamish-hub/innovace.git
+cd innovace
+```
 
-
-## install dependencies
-
+### 2. Install dependencies
+```bash
 pip install -r requirements.txt
+```
 
-2. Install dependencies
-pip install -r requirements.txt
-3. Run the app
-streamlit run lastapp.py
-🧪 Optional: Run with Local LLM (Ollama)
+### 3. (Optional) Add a Gemini API key
+The internship recommendations work without any key. The AI features (learning advice, resume suggestions, roadmap) need either a Gemini API key or a local Ollama model.
 
-Run Llama 3 model:
+Set the key as an environment variable, or paste it into the sidebar of the app:
+```bash
+# Windows PowerShell
+$env:GEMINI_API_KEY = "your_key"
 
+# macOS / Linux
+export GEMINI_API_KEY="your_key"
+```
+The model defaults to `gemini-2.5-flash` and can be changed with the `GEMINI_MODEL` variable. Never commit a key to the repository.
+
+### 4. Run the app
+```bash
+streamlit run streamlit_app.py
+```
+
+### 🧪 Optional: run with a local LLM (Ollama)
+```bash
 ollama run llama3:8b
+```
+The app calls Gemini first and falls back to the local Llama 3 model if Gemini is unavailable.
 
-Or use a faster lightweight model:
+---
 
-ollama run phi3
-📈 Future Improvements
-Explainable AI (Why this internship matches you)
-Skill gap scoring (numeric)
-Resume vs job description comparison
-Multi-model routing (DeepSeek + Llama)
-Real-time job scraping
-🤝 Contribution
+## 📁 Project Structure
+
+```text
+streamlit_app.py     Streamlit app: recommendations, skill analysis, resume scanner, roadmap
+scoring.py           Skill-overlap score between a profile and recommended internships
+user_input.py        Sidebar form for profile and filters
+data/raw/            Original internship listings
+data/processed/      Cleaned listings used by the app
+notebooks/           Exploration: dataset setup, filtering, resume checker, recommender, LLM integration
+```
+
+The notebooks were run with local absolute paths; update the paths before re-running them.
+
+---
+
+## 📦 Dataset
+
+Internshala internship listings from the Kaggle dataset `vipul143/internshala-internship-dataset`: 6,642 listings, 6,583 after cleaning.
+
+---
+
+## 📈 Future Improvements
+
+- Explainable AI (why this internship matches you)
+- Skill gap scoring (numeric)
+- Resume vs job description comparison
+- Multi-model routing (DeepSeek + Llama)
+- Real-time job scraping
+
+---
+
+## 🤝 Contribution
 
 Feel free to contribute by improving:
 
-UI/UX
-Model accuracy
-Prompt engineering
-Dataset quality
-📌 Conclusion
+- UI/UX
+- Model accuracy
+- Prompt engineering
+- Dataset quality
+
+---
+
+## 📌 Conclusion
 
 InternAI is not just a recommendation system — it is a complete AI-driven career assistant that guides users through:
 
-👉 Skill Assessment
-→ Internship Matching
-→ Resume Improvement
-→ Learning Roadmap
+👉 Skill Assessment → Internship Matching → Resume Improvement → Learning Roadmap
