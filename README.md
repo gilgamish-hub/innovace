@@ -1,5 +1,7 @@
 # 🎯 InternAI – Smart Internship Recommendation System
 
+**[Live demo](https://innovace.streamlit.app)**
+
 InternAI is an AI-powered internship recommendation system that helps students discover the most suitable internships based on their skills, preferences, and profile. It combines Machine Learning with Large Language Models (LLMs) to provide personalized insights, skill gap analysis, resume evaluation, and learning roadmaps.
 
 ---
